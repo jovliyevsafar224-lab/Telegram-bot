@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: telegram-bot
+    runtime: python
+    # Muhim: SQLite bazasi doimiy disk talab qiladi. Disk faqat pullik rejada (starter) bor.
+    # Bepul rejada sinash uchun: plan: free qiling va "disk:" blokini hamda
+    # DB_PATH / LOG_DIR ni o'chiring (har deployda baza tozalanadi).
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    healthCheckPath: /health
+    disk:
+      name: bot-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: BOT_TOKEN
+        sync: false        # qiymatni Render dashboardda qo'lda kiritasiz
+      - key: ADMIN_IDS
+        sync: false        # masalan: 123456789,987654321
+      - key: DB_PATH
+        value: /var/data/bot.db
+      - key: LOG_DIR
+        value: /var/data/logs
+      - key: PYTHON_VERSION
+        value: 3.12.7
